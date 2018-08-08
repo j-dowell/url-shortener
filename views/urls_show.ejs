@@ -7,6 +7,9 @@
     <p>
         <%= shortURL %>
         <%= longURL[shortURL] %>
+        <form method="POST" action="/urls/:id">
+            <input style="width:15%" type="text" value="<%= longURL[shortURL] %>">
+        <input type="submit" value="Update URL"></form>
     </p>
 </body>
 </html>
