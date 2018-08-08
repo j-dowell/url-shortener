@@ -3,9 +3,8 @@ var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true})); // middleware
+app.set('view engine', 'ejs'); // template
 
 function generateRandomString() {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
@@ -24,7 +23,7 @@ var urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.end("Hello! Welcome to Tiny App");
 });
 
 app.get('/urls', (req, res) => {
@@ -43,8 +42,12 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(301, longURL);
+  if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
+    res.redirect(404, 'http://localhost:8080')
+  } else {
+    let longURL = urlDatabase[req.params.shortURL];
+    res.redirect(301, longURL);
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
