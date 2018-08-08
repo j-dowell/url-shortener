@@ -42,7 +42,6 @@ app.get("/", (req, res) => {
 
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
-  console.log(req)
   let templateVars = {  urls: urlDatabase, username: req.cookies["username"] };
   res.render('urls_index', templateVars);
 });

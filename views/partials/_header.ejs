@@ -16,11 +16,17 @@
 </head>
 <body>
     <h1>Link Shortener</h1>
+    <% if (!username) { %>
     <form method="POST" action="/login">
         <label for="username">Enter username:</label>
         <input type="text" name="username">
         <input type="submit">
     </form>
+    <% } else { %>
     <p>You're logged in as <%= username %></p>
+    <form method="POST" action="/logout">
+        <input type='submit' value="Logout">
+    </form>
+    <% }; %>
 </body>
 </html>
