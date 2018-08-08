@@ -5,10 +5,13 @@ const bodyParser = require("body-parser");
 
 var PORT = 8080; // default port 8080
 
-app.use(bodyParser.urlencoded({extended: true})); // middleware to parse body of POST request
-app.set('view engine', 'ejs'); // Embedded Javascript Template
+// middleware to parse body of POST request
+app.use(bodyParser.urlencoded({extended: true})); 
 
-// Returns a string of 6 random character
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
+
+// Returns a string of 6 random characters
 function generateRandomString() {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
   const stringLength = 6;
@@ -49,7 +52,7 @@ app.post("/urls", (req, res) => {
 });
 
 
-// Deletes link of choice 
+// Deletes link of choice and redirects to url page
 app.post("/urls/:id/delete", (req, res) => {
   let link = req.params.id;
   delete urlDatabase[link];
