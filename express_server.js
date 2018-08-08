@@ -9,9 +9,9 @@ app.set('view engine', 'ejs');
 
 function generateRandomString() {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-  let stringLength = 6;
+  const stringLength = 6;
   let stringResult = '';
-  for (i = 0; i < stringLength; i++) {
+  for (let i = 0; i < stringLength; i++) {
     let num = Math.floor(Math.random() * chars.length);
     stringResult += chars[num];
   }
