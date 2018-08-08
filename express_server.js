@@ -15,6 +15,7 @@ app.use(cookieParser());
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
+// HELPER FUNCTIONS
 // Returns a string of 6 random characters
 function generateRandomString() {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
@@ -25,6 +26,17 @@ function generateRandomString() {
     stringResult += chars[num];
   }
   return stringResult;
+}
+
+// Given email input, checks against users database to see if it exists
+function userEmailCheck(input) {
+  for (user in users) {
+    if (user.hasOwnProperty(input)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
 
 // Databases
@@ -124,17 +136,24 @@ app.get("/register", (req, res) => {
 
 // Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
-  let userID = generateRandomString();
-  users[userID] = {
-                    id: userID, 
-                    email: req.body.email, 
-                    password: req.body.password
-                  };
-  res.cookie('user_id', userID);
-  res.redirect('/urls');
-})
+  if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
+    res.redirect(400, "/register");
+  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
+      res.redirect(400, "/register");    
+  } else {
+      let userID = generateRandomString();
+      users[userID] = {
+                        id: userID, 
+                        email: req.body.email, 
+                        password: req.body.password
+                      };
+      res.cookie('user_id', userID);
+      res.redirect('/urls');
+      } 
+});
 
 // Creates server with given port
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
