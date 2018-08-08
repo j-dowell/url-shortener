@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 
 var PORT = 8080; // default port 8080
 
-// middleware to parse body of POST request
+// Middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
 
 // Parsing cookies
@@ -38,15 +38,13 @@ app.get("/", (req, res) => {
   res.end("Hello! Welcome to Tiny App");
 });
 
-
-
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {  urls: urlDatabase, username: req.cookies["username"] };
   res.render('urls_index', templateVars);
 });
 
-// Logs user in with given username input and stores cookie
+// Stores username input as cookie and redirects user to /urls
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
@@ -110,7 +108,3 @@ app.get("/urls/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// Stores username input as cookie and redirects user to /urls
-
-
