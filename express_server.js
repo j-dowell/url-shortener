@@ -31,11 +31,18 @@ function generateRandomString() {
 // Given email input, checks against users database to see if it exists
 function userEmailCheck(input) {
   for (user in users) {
-    if (user.hasOwnProperty(input)) {
-      return false;
-    } else {
-      return true;
+    if (users[user].email === input) {
+      return users[user].id;
     }
+  }
+  return false;
+}
+
+function userPasswordCheck(id, pass) {
+  if (users[id].password === pass) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -134,11 +141,33 @@ app.get("/register", (req, res) => {
   res.render('register', templateVars)
 });
 
+// Login page
+app.get("/login", (req, res) => {
+  let templateVars = { userObj: users[req.cookies["user_id"]]};
+  res.render('login', templateVars)
+});
+
+
+// Login post
+app.post("/login", (req, res) => {
+  if (!userEmailCheck(req.body.email)) {
+    let templateVars = {};
+    res.render('/register', templateVars)
+  }
+  // if (userPasswordCheck(req.body.email, req.body.pass)) {
+  //   let templateVars = { userObj: users[req.cookies["user_id"]]};
+  //   res.render('urls_index', templateVars);
+  // } else {
+  //   console.log('error')
+  //   res.redirect(400, '/login');
+  // }
+})
+
 // Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
     res.redirect(400, "/register");
-  } else if (!userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
+  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
       res.redirect(400, "/register");    
   } else {
       let userID = generateRandomString();
