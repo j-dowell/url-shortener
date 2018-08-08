@@ -48,6 +48,14 @@ app.post("/urls", (req, res) => {
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
+
+// Deletes link of choice 
+app.post("/urls/:id/delete", (req, res) => {
+  let link = req.params.id;
+  delete urlDatabase[link];
+  res.redirect(303, 'http://localhost:8080/urls')
+});
+
 // Checks if shortened URL is valid, and redirects to it if so
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
