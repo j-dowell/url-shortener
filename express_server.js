@@ -39,12 +39,12 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
   let shortenedString = generateRandomString();
   urlDatabase[shortenedString] = req.body.longURL;
-  res.redirect(`http://localhost:8080/urls/${shortenedString}`);
+  res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  res.redirect(301, longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
