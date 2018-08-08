@@ -46,10 +46,17 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// Logs user in with given username input and stores cookie
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
 });
+
+//
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
 
 // Link generator
 app.get("/urls/new", (req, res) => {
