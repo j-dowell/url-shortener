@@ -52,7 +52,7 @@ app.post("/login", (req, res) => {
   res.redirect('/urls');
 });
 
-//
+// Logs user out, clears cookies, redirects to urls page
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
