@@ -32,7 +32,6 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-
 // Home page
 app.get("/", (req, res) => {
   res.end("Hello! Welcome to Tiny App");
@@ -69,7 +68,6 @@ app.post("/urls", (req, res) => {
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
-
 // Deletes link of choice and redirects to url page
 app.post("/urls/:id/delete", (req, res) => {
   let link = req.params.id;
@@ -102,6 +100,12 @@ app.get("/urls/:id", (req, res) => {
                       username: req.cookies["username"] 
                       };
   res.render("urls_show", templateVars);
+});
+
+// Register page
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["username"] };
+  res.render('register', templateVars)
 });
 
 // Creates server with given port
