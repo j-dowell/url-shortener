@@ -1,11 +1,14 @@
+// Requirements
 var express = require("express");
 var app = express();
-var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 
-app.use(bodyParser.urlencoded({extended: true})); // middleware
-app.set('view engine', 'ejs'); // template
+var PORT = 8080; // default port 8080
 
+app.use(bodyParser.urlencoded({extended: true})); // middleware to parse body of POST request
+app.set('view engine', 'ejs'); // Embedded Javascript Template
+
+// Returns a string of 6 random character
 function generateRandomString() {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
   const stringLength = 6;
@@ -22,25 +25,30 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// Home page
 app.get("/", (req, res) => {
   res.end("Hello! Welcome to Tiny App");
 });
 
+// Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {  urls: urlDatabase };
   res.render('urls_index', templateVars);
 })
 
+// Link generator
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
   let shortenedString = generateRandomString();
   urlDatabase[shortenedString] = req.body.longURL;
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
+// Checks if shortened URL is valid, and redirects to it if so
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
     res.redirect(404, 'http://localhost:8080')
@@ -50,6 +58,7 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+// Displays short and long URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { 
                       shortURL: req.params.id,
@@ -58,14 +67,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
-});
-
+// Creates server with given port
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
