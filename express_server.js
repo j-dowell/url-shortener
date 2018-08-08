@@ -122,9 +122,16 @@ app.get("/register", (req, res) => {
   res.render('register', templateVars)
 });
 
-// 
+// Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
-
+  let userID = generateRandomString();
+  users[userID] = {
+                    id: userID, 
+                    email: req.body.email, 
+                    password: req.body.password
+                  };
+  res.cookie('user_id', userID);
+  res.redirect('/urls');
 })
 
 // Creates server with given port
