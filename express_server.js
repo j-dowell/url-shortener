@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
 
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
-  let templateVars = {  urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = {  urls: urlDatabase, userObj: users[req.cookies["user_id"]] };
   res.render('urls_index', templateVars);
 });
 
@@ -77,13 +77,13 @@ app.post("/login", (req, res) => {
 
 // Logs user out, clears cookies, redirects to urls page
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 })
 
 // Link generator
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"]}
+  let templateVars = { userObj: users[req.cookies["user_id"]]}
   res.render("urls_new", templateVars);
 });
 
@@ -123,14 +123,14 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = { 
                       shortURL: req.params.id,
                       longURL: urlDatabase,
-                      username: req.cookies["username"] 
+                      userObj: users[req.cookies["user_id"]] 
                       };
   res.render("urls_show", templateVars);
 });
 
 // Register page
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { userObj: users[req.cookies["user_id"]] };
   res.render('register', templateVars)
 });
 
@@ -138,7 +138,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
     res.redirect(400, "/register");
-  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
+  } else if (!userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
       res.redirect(400, "/register");    
   } else {
       let userID = generateRandomString();
