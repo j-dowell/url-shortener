@@ -2,11 +2,15 @@
 var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 var PORT = 8080; // default port 8080
 
 // middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
+
+// Parsing cookies
+app.use(cookieParser());
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -28,20 +32,30 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
 // Home page
 app.get("/", (req, res) => {
   res.end("Hello! Welcome to Tiny App");
 });
 
+
+
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
-  let templateVars = {  urls: urlDatabase };
+  console.log(req)
+  let templateVars = {  urls: urlDatabase, username: req.cookies["username"] };
   res.render('urls_index', templateVars);
-})
+});
+
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
+});
 
 // Link generator
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { username: req.cookies["username"]}
+  res.render("urls_new", templateVars);
 });
 
 // Takes in user input, adds new random URL and redirects client
@@ -80,7 +94,8 @@ app.post("/urls/:id", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = { 
                       shortURL: req.params.id,
-                      longURL: urlDatabase 
+                      longURL: urlDatabase,
+                      username: req.cookies["username"] 
                       };
   res.render("urls_show", templateVars);
 });
@@ -90,8 +105,6 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-app.post("/login", (req, res) => {
-  let username = req.body.username;
-  res.cookie('name', username);
-  res.redirect('/urls')
-});
+// Stores username input as cookie and redirects user to /urls
+
+
