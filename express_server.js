@@ -69,6 +69,16 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+// Updates long url
+app.post("/urls/:id", (req, res) => {
+  let link = req.params.id;
+  console.log(link);
+  urlDatabase[link] = req.body.longURL;
+  console.log(urlDatabase);
+  console.log(urlDatabase[link]);
+  res.redirect('/urls/')
+})
+
 // Displays short and long URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { 
@@ -77,6 +87,8 @@ app.get("/urls/:id", (req, res) => {
                       };
   res.render("urls_show", templateVars);
 });
+
+
 
 // Creates server with given port
 app.listen(PORT, () => {
