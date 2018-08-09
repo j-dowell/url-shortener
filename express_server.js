@@ -90,7 +90,9 @@ app.get("/register", (req, res) => {
 
 // Login page
 app.get("/login", (req, res) => {
-  let templateVars = { userObj: users[req.cookies["user_id"]]};
+  let templateVars = {
+    userObj: users[req.cookies["user_id"]]
+  };
   res.render('login', templateVars)
 });
 
@@ -118,27 +120,29 @@ app.post("/register", (req, res) => {
   } else {
       let userID = generateRandomString();
       users[userID] = {
-                        id: userID, 
-                        email: req.body.email, 
-                        password: req.body.password
-                      };
+        id: userID, 
+        email: req.body.email, 
+        password: req.body.password
+      };
       res.cookie('user_id', userID);
       res.redirect('/urls');
-      } 
+    }; 
 });
 
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
-  let templateVars = {  urls: urlDatabase, userObj: users[req.cookies["user_id"]] };
-  console.log(users)
-  console.log(req.cookies["user_id"])
-  console.log(templateVars)
+  let templateVars = {
+    urls: urlDatabase, 
+    userObj: users[req.cookies["user_id"]]
+  };
   res.render('urls_index', templateVars);
 });
 
 // Link generator
 app.get("/urls/new", (req, res) => {
-  let templateVars = { userObj: users[req.cookies["user_id"]]}
+  let templateVars = { 
+    userObj: users[req.cookies["user_id"]] 
+  };
   res.render("urls_new", templateVars);
 });
 
@@ -151,7 +155,11 @@ app.post('/logout', (req, res) => {
 // Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
   let shortenedString = generateRandomString();
-  urlDatabase[shortenedString] = { shortURL: shortenedString, longURL: req.body.longURL, userID: req.cookies['user_id']};
+  urlDatabase[shortenedString] = { 
+    shortURL: shortenedString, 
+    longURL: req.body.longURL, 
+    userID: req.cookies['user_id']
+  };
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
@@ -174,20 +182,21 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Updates long url
 app.post("/urls/:id", (req, res) => {
-  console.log('post', req.params.id)
-  console.log('post', req.body.longURL)
   let link = req.params.id;
-  urlDatabase[link] = { shortURL: link, longURL: req.body.longURL, userID: req.cookies['user_id'] };
-  res.redirect('/urls/')
+  urlDatabase[link] = {
+    shortURL: link, 
+    longURL: req.body.longURL, 
+    userID: req.cookies['user_id'] 
+  };
+  res.redirect('/urls/');
 });
 
 // Displays short and long URL
 app.get("/urls/:id", (req, res) => {
-  console.log('get', req.params.id)
-  console.log(urlDatabase)
-  let templateVars = { urls: urlDatabase[req.params.id],
-                      userObj: users[req.cookies["user_id"]] 
-                      };
+  let templateVars = {
+    urls: urlDatabase[req.params.id],
+    userObj: users[req.cookies["user_id"]] 
+  };
   res.render("urls_show", templateVars);
 });
 
