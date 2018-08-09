@@ -2,7 +2,6 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-// const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 var cookieSession = require('cookie-session');
 
@@ -11,7 +10,8 @@ var PORT = 8080; // default port 8080
 
 // Middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
-// app.use(cookieParser()); // Parsing cookies
+
+// Encrypt cookies
 app.use(cookieSession({
   name: 'user_id',
   keys: ['lighthouse', 'tiny', 'url'],
@@ -57,7 +57,7 @@ var urlDatabase = {
     userID: 'user2RandomID' 
   }
 };
-
+// User database
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -78,7 +78,11 @@ const users = {
 
 // Home page
 app.get("/", (req, res) => {
-  res.end("Hello! Welcome to Tiny App");
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // Register page

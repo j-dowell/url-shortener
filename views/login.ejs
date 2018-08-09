@@ -13,12 +13,13 @@
 <body>
     <h1>Link Shortener</h1>
     <% if (!userObj) { %>
-    <p>Please login</p>
+    <p>Login</p>
         <form method="POST" action="/login">
             Email:<input type="email" name="email">
             Password:<input type="password" name="password">
             <input type="submit">
         </form> 
+        <p><a href="/register">Or click here to register</a></p>
     <% } else { %>
     <p>Hi! You're logged in as <%= userObj.email %></p>
     <p><a href="/urls">Your shortened URLs</a></p>
