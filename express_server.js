@@ -62,6 +62,11 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
+  },
+  "test123": {
+    id: 'test123',
+    email: "test@gmail.com",
+    password: "testpass"
   }
 };
 
@@ -78,7 +83,16 @@ app.get('/urls', (req, res) => {
 
 // Stores username input as cookie and redirects user to /urls
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  if (!userEmailCheck(req.body.email)) {
+  console.log("email doesn't exist");
+    res.redirect(400, "/login");
+  }
+  if (!userPasswordCheck(userEmailCheck(req.body.email), req.body.password)) {
+    console.log("wrong pass");
+    res.redirect(400, "/login");
+  }
+  var id = userEmailCheck(req.body.email)
+  res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
@@ -146,22 +160,6 @@ app.get("/login", (req, res) => {
   let templateVars = { userObj: users[req.cookies["user_id"]]};
   res.render('login', templateVars)
 });
-
-
-// Login post
-app.post("/login", (req, res) => {
-  if (!userEmailCheck(req.body.email)) {
-    let templateVars = {};
-    res.render('/register', templateVars)
-  }
-  // if (userPasswordCheck(req.body.email, req.body.pass)) {
-  //   let templateVars = { userObj: users[req.cookies["user_id"]]};
-  //   res.render('urls_index', templateVars);
-  // } else {
-  //   console.log('error')
-  //   res.redirect(400, '/login');
-  // }
-})
 
 // Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
