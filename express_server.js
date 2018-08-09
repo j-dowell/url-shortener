@@ -24,7 +24,7 @@ function generateRandomString() {
     stringResult += chars[num];
   }
   return stringResult;
-}
+};
 
 // Given email input, returns user id if it exists in database
 function userEmailCheck(input) {
@@ -34,7 +34,7 @@ function userEmailCheck(input) {
     }
   }
   return false;
-}
+};
 
 // Given an id and password input, check these against the users database and return true or false
 function userPasswordCheck(id, pass) {
@@ -43,12 +43,20 @@ function userPasswordCheck(id, pass) {
   } else {
     return false;
   }
-}
+};
 
 // Databases
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+var urlDatabase = { 
+  "b2xVn2": {
+    shortURL: "b2xVn2",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "user2RandomID"
+  },
+  "9sm5xK": { 
+    shortURL: "9sm5xK",
+    longURL: "http://www.google.com",
+    userID: 'user2RandomID' 
+  }
 };
 
 const users = { 
@@ -135,12 +143,12 @@ app.get("/urls/new", (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/urls');
-})
+});
 
 // Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
   let shortenedString = generateRandomString();
-  urlDatabase[shortenedString] = req.body.longURL;
+  urlDatabase[shortenedString] = { shortURL: shortenedString, longURL: req.body.longURL, userID: req.cookies['user_id']};
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
 
@@ -156,23 +164,25 @@ app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
     res.redirect(404, 'http://localhost:8080')
   } else {
-    let longURL = urlDatabase[req.params.shortURL];
+    let longURL = urlDatabase[req.params.shortURL].url;
     res.redirect(301, longURL);
   }
 });
 
 // Updates long url
 app.post("/urls/:id", (req, res) => {
+  console.log('post', req.params.id)
+  console.log('post', req.body.longURL)
   let link = req.params.id;
-  urlDatabase[link] = req.body.longURL;
+  urlDatabase[link] = { shortURL: link, longURL: req.body.longURL, userID: req.cookies['user_id'] };
   res.redirect('/urls/')
-})
+});
 
 // Displays short and long URL
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { 
-                      shortURL: req.params.id,
-                      longURL: urlDatabase,
+  console.log('get', req.params.id)
+  console.log(urlDatabase)
+  let templateVars = { urls: urlDatabase[req.params.id],
                       userObj: users[req.cookies["user_id"]] 
                       };
   res.render("urls_show", templateVars);
