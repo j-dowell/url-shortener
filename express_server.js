@@ -130,6 +130,9 @@ app.post("/register", (req, res) => {
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {  urls: urlDatabase, userObj: users[req.cookies["user_id"]] };
+  console.log(users)
+  console.log(req.cookies["user_id"])
+  console.log(templateVars)
   res.render('urls_index', templateVars);
 });
 
