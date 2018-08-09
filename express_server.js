@@ -1,14 +1,19 @@
 // Requirements
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
-// declaring static directory
-// app.use(express.static(__dirname + '/views'));
+// Databases
+const urlDatabase = require('./Databases/urlDb.js');
+const users = require('./Databases/userDb.js');
 
+// Creates server with given port
+const app = express();
 const PORT = 8080; // default port 8080
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}!`);
+});
 
 // Middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
@@ -46,38 +51,6 @@ function userEmailCheck(input) {
   return false;
 }
 
-// Databases
-let urlDatabase = { 
-  "b2xVn2": {
-    shortURL: "b2xVn2",
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "user2RandomID"
-  },
-  "9sm5xK": { 
-    shortURL: "9sm5xK",
-    longURL: "http://www.google.com",
-    userID: 'user2RandomID' 
-  }
-};
-// User database
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "$2b$10$JK7guQEGyDtfghHW0VTXDu.M5/DkAoV6.eC1Sb0TUqNh/iomOxWdG"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "$2b$10$jKaVTzTzGzMf2/S72dm8rO1xJWow2VBLdsGLwx2Kg9JP8SeITRaaK"
-  },
-  "test123": {
-    id: 'test123',
-    email: "test@gmail.com",
-    password: "$2b$10$DtGf4RU9cBJoP127zTEOyODl3XsGoUHF197FsLbjqgWYdZ31q20V2"
-  }
-};
-
 // Home page
 app.get("/", (req, res) => {
   if (req.session.user_id) {
@@ -91,30 +64,6 @@ app.get("/", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = { userObj: users[req.session.user_id] };
   res.render('register', templateVars);
-});
-
-// Login page
-app.get("/login", (req, res) => {
-  let templateVars = {
-    userObj: users[req.session.user_id]
-  };
-  res.render('login', templateVars)
-});
-
-// Login POST -  Stores username input as cookie and redirects user to /urls after handling input erros
-app.post("/login", (req, res) => {
-  if (!userEmailCheck(req.body.email)) {
-    res.redirect(400, "/login");
-    return;
-  }
-  let user = userEmailCheck(req.body.email)
-  if (!bcrypt.compareSync(req.body.password, users[user].password)) {
-    res.redirect(400, "/login");
-    return;
-  }
-  let id = userEmailCheck(req.body.email);
-  req.session.user_id = id;
-  res.redirect('/urls');
 });
 
 // Register POST - Updates user database with input information and adds userID cookie
@@ -135,6 +84,30 @@ app.post("/register", (req, res) => {
     }; 
 });
 
+// Login page
+app.get("/login", (req, res) => {
+  let templateVars = {
+    userObj: users[req.session.user_id]
+  };
+  res.render('login', templateVars)
+});
+
+// Login POST -  Stores username input as cookie and redirects user to /urls
+app.post("/login", (req, res) => {
+  if (!userEmailCheck(req.body.email)) { 
+    res.redirect(400, "/login");
+    return;
+  }
+  let user = userEmailCheck(req.body.email)
+  if (!bcrypt.compareSync(req.body.password, users[user].password)) {
+    res.redirect(400, "/login");
+    return;
+  }
+  let id = userEmailCheck(req.body.email);
+  req.session.user_id = id;
+  res.redirect('/urls');
+});
+
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {
@@ -144,7 +117,7 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-// Link generator
+// Short url generator page
 app.get("/urls/new", (req, res) => {
   let templateVars = { 
     userObj: users[req.session.user_id]
@@ -152,10 +125,18 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// Logs user out, clears cookies, redirects to urls page
-app.post('/logout', (req, res) => {
-  req.session = null;
-  res.redirect('/urls');
+// Displays short and long URL
+app.get("/urls/:id", (req, res) => {
+  if (urlDatabase[req.params.id].userID === req.session.user_id) {
+    let templateVars = {
+      urls: urlDatabase[req.params.id],
+      userObj: users[req.session.user_id]
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    let templateVars = { userObj: users[req.session.user_id] }
+    res.render('denied', templateVars);
+  } 
 });
 
 // Takes in user input, adds new random URL and redirects client
@@ -167,6 +148,21 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id
   };
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
+});
+
+// Updates long url
+app.post("/urls/:id", (req, res) => {
+  if (req.session.user_id) {
+    let link = req.params.id;
+    urlDatabase[link] = {
+      shortURL: link, 
+      longURL: req.body.longURL, 
+      userID: req.session.user_id
+    };
+    res.redirect('/urls/');
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 // Deletes link of choice and redirects to url page
@@ -191,36 +187,8 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-// Updates long url
-app.post("/urls/:id", (req, res) => {
-  if (req.session.user_id) {
-    let link = req.params.id;
-    urlDatabase[link] = {
-      shortURL: link, 
-      longURL: req.body.longURL, 
-      userID: req.session.user_id
-    };
-    res.redirect('/urls/');
-  } else {
-    res.redirect('/urls');
-  }
-});
-
-// Displays short and long URL
-app.get("/urls/:id", (req, res) => {
-  if (urlDatabase[req.params.id].userID === req.session.user_id) {
-    let templateVars = {
-      urls: urlDatabase[req.params.id],
-      userObj: users[req.session.user_id]
-    };
-    res.render("urls_show", templateVars);
-  } else {
-    let templateVars = { userObj: users[req.session.user_id] }
-    res.render('denied', templateVars);
-  } 
-});
-
-// Creates server with given port
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+// Logs user out, clears cookies, redirects to urls page
+app.post('/logout', (req, res) => {
+  req.session = null;
+  res.redirect('/urls');
 });
