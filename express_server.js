@@ -159,7 +159,7 @@ app.post("/urls/:id", (req, res) => {
       longURL: req.body.longURL, 
       userID: req.session.user_id
     };
-    res.redirect('/urls/');
+    res.redirect('/urls');
   } else {
     res.redirect('/urls');
   }
