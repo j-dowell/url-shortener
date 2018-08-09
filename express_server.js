@@ -1,9 +1,11 @@
 // Requirements
-var express = require("express");
-var app = express();
+const express = require("express");
+const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
+var cookieSession = require('cookie-session');
+
 
 var PORT = 8080; // default port 8080
 
