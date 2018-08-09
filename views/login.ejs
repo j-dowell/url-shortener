@@ -21,6 +21,7 @@
         </form> 
     <% } else { %>
     <p>Hi! You're logged in as <%= userObj.email %></p>
+    <p><a href="/urls">Your shortened URLs</a></p>
     <form method="POST" action="/logout">
         <input type='submit' value="Logout">
     </form>

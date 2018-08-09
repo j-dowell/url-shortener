@@ -149,7 +149,7 @@ app.get("/urls/new", (req, res) => {
 // Logs user out, clears cookies, redirects to urls page
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 // Takes in user input, adds new random URL and redirects client
