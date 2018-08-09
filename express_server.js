@@ -87,7 +87,6 @@ app.get("/", (req, res) => {
 
 // Register page
 app.get("/register", (req, res) => {
-  // let templateVars = { userObj: users[req.cookies["user_id"]] };
   let templateVars = { userObj: users[req.session.user_id] };
   res.render('register', templateVars)
 });
@@ -95,7 +94,6 @@ app.get("/register", (req, res) => {
 // Login page
 app.get("/login", (req, res) => {
   let templateVars = {
-    // userObj: users[req.cookies["user_id"]]
     userObj: users[req.session.user_id]
   };
   res.render('login', templateVars)
@@ -113,7 +111,6 @@ app.post("/login", (req, res) => {
     return;
   }
   var id = userEmailCheck(req.body.email)
-  // res.cookie('user_id', id);
   req.session.user_id = id;
   res.redirect('/urls');
 });
@@ -131,7 +128,6 @@ app.post("/register", (req, res) => {
         email: req.body.email, 
         password: bcrypt.hashSync(req.body.password, 10)
       };
-      // res.cookie('user_id', userID);
       req.session.user_id = userID;
       res.redirect('/urls');
     }; 
@@ -142,7 +138,6 @@ app.get('/urls', (req, res) => {
   let templateVars = {
     urls: urlDatabase, 
     userObj: users[req.session.user_id]
-    // userObj: users[req.cookies["user_id"]]
   };
   res.render('urls_index', templateVars);
 });
@@ -151,7 +146,6 @@ app.get('/urls', (req, res) => {
 app.get("/urls/new", (req, res) => {
   let templateVars = { 
     userObj: users[req.session.user_id]
-    // userObj: users[req.cookies["user_id"]] 
   };
   res.render("urls_new", templateVars);
 });
@@ -159,7 +153,6 @@ app.get("/urls/new", (req, res) => {
 // Logs user out, clears cookies, redirects to urls page
 app.post('/logout', (req, res) => {
   req.session = null;
-  // res.clearCookie('user_id');
   res.redirect('/login');
 });
 
@@ -197,7 +190,6 @@ app.post("/urls/:id", (req, res) => {
   urlDatabase[link] = {
     shortURL: link, 
     longURL: req.body.longURL, 
-    // userID: req.cookies['user_id'] 
     userID: req.session.user_id
   };
   res.redirect('/urls/');
@@ -207,7 +199,6 @@ app.post("/urls/:id", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     urls: urlDatabase[req.params.id],
-    // userObj: users[req.cookies["user_id"]] 
     userObj: users[req.session.user_id]
   };
   res.render("urls_show", templateVars);
