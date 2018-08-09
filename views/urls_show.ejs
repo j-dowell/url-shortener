@@ -12,7 +12,9 @@
         Long URL: <%= longURL[shortURL] %>
         <form method="POST" action="/urls/<%= shortURL %>/">
             <input name="longURL" style="width:15%" type="text" value="<%= longURL[shortURL] %>">
-        <input type="submit" value="Update URL"></form>
+            <input type="submit" value="Update URL">
+        </form>
     </p>
+    <p><a href="/urls">Click here to see all shortened URLs</a></p>
 </body>
 </html>
