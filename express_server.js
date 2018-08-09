@@ -4,6 +4,7 @@ var app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
+const bcrypt = require('bcrypt');
 var PORT = 8080; // default port 8080
 
 // Middleware to parse body of POST request
@@ -63,17 +64,17 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: "$2b$10$JK7guQEGyDtfghHW0VTXDu.M5/DkAoV6.eC1Sb0TUqNh/iomOxWdG"
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: "$2b$10$jKaVTzTzGzMf2/S72dm8rO1xJWow2VBLdsGLwx2Kg9JP8SeITRaaK"
   },
   "test123": {
     id: 'test123',
     email: "test@gmail.com",
-    password: "testpass"
+    password: "$2b$10$DtGf4RU9cBJoP127zTEOyODl3XsGoUHF197FsLbjqgWYdZ31q20V2"
   }
 };
 
@@ -102,7 +103,11 @@ app.post("/login", (req, res) => {
     res.redirect(400, "/login");
     return;
   }
-  if (!userPasswordCheck(userEmailCheck(req.body.email), req.body.password)) {
+  let user = userEmailCheck(req.body.email)
+  console.log(user)
+  console.log(req.body.password)
+  console.log(users[user].password)
+  if (!bcrypt.compareSync(req.body.password, users[user].password)) {
     res.redirect(400, "/login");
     return;
   }
@@ -122,7 +127,7 @@ app.post("/register", (req, res) => {
       users[userID] = {
         id: userID, 
         email: req.body.email, 
-        password: req.body.password
+        password: bcrypt.hashSync(password, 10)
       };
       res.cookie('user_id', userID);
       res.redirect('/urls');
