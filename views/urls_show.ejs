@@ -2,19 +2,30 @@
 <html lang="en">
 <head>
   <title>TinyApp</title>
+  <style>
+        div {
+            margin: auto;
+            text-align: center;
+            width: 70%;
+        }
+  </style>
 </head>
 <body>
     <header>
             <% include partials/_header %>
     </header>
-    <p>
-        Short URL: <%= urls.shortURL %> <br>
-        Long URL: <%= urls.longURL %>
-        <form method="POST" action="/urls/<%= urls.shortURL %>/">
-            <input name="longURL" style="width:15%" type="text" value="<%= urls.longURL %>">
-            <input type="submit" value="Update URL">
-        </form>
-    </p>
+    <% if (!userObj) { %>
+        <% } else { %>
+        <div>
+            <br>
+            Short URL: <%= urls.shortURL %> <br>
+            Long URL: <%= urls.longURL %>
+            <form method="POST" action="/urls/<%= urls.shortURL %>/">
+                <input name="longURL" style="width:15%" type="text" value="<%= urls.longURL %>">
+                <input type="submit" value="Update URL">
+            </form>
+        </div>
     <p><a href="/urls">Click here to see all shortened URLs</a></p>
+    <% }; %>
 </body>
 </html>

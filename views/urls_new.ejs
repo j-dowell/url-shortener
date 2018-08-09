@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
   <head></head>
-  <style> * {
-    font-family: sans-serif
-  }
+  <style> 
+    * {
+      font-family: sans-serif
+    }
+    div {
+            margin: auto;
+            width: 50%;
+    }
   </style>
-  <body style="font-size:20px; padding:50px;">
-    <!-- <% include partials/_header %> -->  
-    <h1>Link Shortener</h1>
+  <body>
+    <% include partials/_header %>  
     <% if (!userObj) { %>  
-      Please login or register to continue:
+      <!-- Please login or register to continue:
       <p><a href="/login">Login</a></p>
-      <p><a href="/register">Register</a></p>
+      <p><a href="/register">Register</a></p> -->
     <% } else { %>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL to shorten:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Submit">
-    </form>
+    <div>
+      <form action="/urls" method="POST" style="margin:150px;">
+        <label for="longURL">Enter a URL to shorten:</label>
+        <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+        <input type="submit" value="Submit">
+      </form>
+  </div>
     <% }; %>
   </body>
 </html>

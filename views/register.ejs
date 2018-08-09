@@ -5,20 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <style> * {
-            font-family: sans-serif
-        }
-        </style>
+    <style>
+        * {
+            font-family: sans-serif;
+            text-align: left
+    }
+        h1, p, a {
+            text-align: center
+    }
+        input[type=email], input[type=password], select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+    }
+
+        #submit1 {
+            width: 100%;
+            text-align: center;
+            background-color: blue;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+    }
+        div {
+            border-radius: 5px;
+            margin: auto;
+            width: 40%;
+            padding: 20px;
+    }
+    </style>
+    </style>
 </head>
 <body>
     <h1>Link Shortener</h1>
     <% if (!userObj) { %>
         <p>Input your details below to register</p>
+        <div>
             <form method="POST" action="/register">
                 Email:<input type="email" name="email">
                 Password:<input type="password" name="password">
-                <input type="submit">
+                <input id="submit1" type="submit">
             </form> 
+        </div>
             <p><a href='/login'>Click here to login if you already have an account</a></p>
         <% } else { %>
         <p>Hi! You're already logged in as <%= userObj.email %></p>

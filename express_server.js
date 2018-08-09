@@ -3,10 +3,12 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-var cookieSession = require('cookie-session');
+const cookieSession = require('cookie-session');
 
+// declaring static directory
+// app.use(express.static(__dirname + '/views'));
 
-var PORT = 8080; // default port 8080
+const PORT = 8080; // default port 8080
 
 // Middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
@@ -16,7 +18,7 @@ app.use(cookieSession({
   name: 'user_id',
   keys: ['lighthouse', 'tiny', 'url'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
+}));
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -32,7 +34,7 @@ function generateRandomString() {
     stringResult += chars[num];
   }
   return stringResult;
-};
+}
 
 // Given email input, returns user id if it exists in database
 function userEmailCheck(input) {
@@ -42,10 +44,10 @@ function userEmailCheck(input) {
     }
   }
   return false;
-};
+}
 
 // Databases
-var urlDatabase = { 
+let urlDatabase = { 
   "b2xVn2": {
     shortURL: "b2xVn2",
     longURL: "http://www.lighthouselabs.ca",
@@ -88,7 +90,7 @@ app.get("/", (req, res) => {
 // Register page
 app.get("/register", (req, res) => {
   let templateVars = { userObj: users[req.session.user_id] };
-  res.render('register', templateVars)
+  res.render('register', templateVars);
 });
 
 // Login page
@@ -110,14 +112,14 @@ app.post("/login", (req, res) => {
     res.redirect(400, "/login");
     return;
   }
-  var id = userEmailCheck(req.body.email)
+  let id = userEmailCheck(req.body.email);
   req.session.user_id = id;
   res.redirect('/urls');
 });
 
 // Register POST - Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
-  if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
+  if (!req.body.password || !req.body.email) { // Checking there isn't input of empty string
     res.redirect(400, "/register");
   } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
       res.redirect(400, "/register");    
@@ -153,7 +155,7 @@ app.get("/urls/new", (req, res) => {
 // Logs user out, clears cookies, redirects to urls page
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect('/login');
+  res.redirect('/urls');
 });
 
 // Takes in user input, adds new random URL and redirects client
@@ -169,39 +171,53 @@ app.post("/urls", (req, res) => {
 
 // Deletes link of choice and redirects to url page
 app.post("/urls/:id/delete", (req, res) => {
-  let link = req.params.id;
-  delete urlDatabase[link];
-  res.redirect(303, 'http://localhost:8080/urls')
+  if (urlDatabase[req.params.id].userID === req.session.user_id) {  
+    let link = req.params.id;
+    delete urlDatabase[link];
+    res.redirect(303, 'http://localhost:8080/urls');
+  } else {
+    let templateVars = { userObj: users[req.session.user_id] };
+    res.render('denied', templateVars);
+  }
 });
 
 // Checks if shortened URL is valid, and redirects to it if so
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
-    res.redirect(404, 'http://localhost:8080')
+    res.redirect(404, 'http://localhost:8080');
   } else {
     let longURL = urlDatabase[req.params.shortURL].longURL;
-    res.redirect(301, longURL);
+    res.redirect(302, longURL);
   }
 });
 
 // Updates long url
 app.post("/urls/:id", (req, res) => {
-  let link = req.params.id;
-  urlDatabase[link] = {
-    shortURL: link, 
-    longURL: req.body.longURL, 
-    userID: req.session.user_id
-  };
-  res.redirect('/urls/');
+  if (req.session.user_id) {
+    let link = req.params.id;
+    urlDatabase[link] = {
+      shortURL: link, 
+      longURL: req.body.longURL, 
+      userID: req.session.user_id
+    };
+    res.redirect('/urls/');
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 // Displays short and long URL
 app.get("/urls/:id", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase[req.params.id],
-    userObj: users[req.session.user_id]
-  };
-  res.render("urls_show", templateVars);
+  if (urlDatabase[req.params.id].userID === req.session.user_id) {
+    let templateVars = {
+      urls: urlDatabase[req.params.id],
+      userObj: users[req.session.user_id]
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    let templateVars = { userObj: users[req.session.user_id] }
+    res.render('denied', templateVars);
+  } 
 });
 
 // Creates server with given port

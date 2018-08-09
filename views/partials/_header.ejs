@@ -9,15 +9,17 @@
         * {
             font-family: sans-serif;
         }
-        h1 {
+        * {
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>Link Shortener</h1>
+    <h1>Tiny URL</h1>
     <% if (!userObj) { %>
+        <p>Please login or register to continue</p>
         <a href="/login">Login</a><br>
+        <br>
         <a href="/register">Register</a>
     <% } else { %>
     <p>You're logged in as <%= userObj.email %></p>
