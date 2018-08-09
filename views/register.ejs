@@ -7,11 +7,22 @@
     <title>Document</title>
 </head>
 <body>
-    <form method="POST" action="/register">
-        Email:<input type="email" name="email">
-        Password:<input type="password" name="password">
-        <input type="submit">
-    </form> 
+    <h1>Link Shortener</h1>
+    <% if (!userObj) { %>
+        <p>Register below</p>
+            <form method="POST" action="/register">
+                Email:<input type="email" name="email">
+                Password:<input type="password" name="password">
+                <input type="submit">
+            </form> 
+        <% } else { %>
+        <p>Hi! You're already logged in as <%= userObj.email %></p>
+        <a href="/urls">Home page</a>
+        </form>
+        <form method="POST" action="/logout">
+            <input type='submit' value="Logout">
+        </form>
+        <% }; %>
 </body>
 </html>
 

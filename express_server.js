@@ -8,9 +8,7 @@ var PORT = 8080; // default port 8080
 
 // Middleware to parse body of POST request
 app.use(bodyParser.urlencoded({extended: true})); 
-
-// Parsing cookies
-app.use(cookieParser());
+app.use(cookieParser()); // Parsing cookies
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -28,7 +26,7 @@ function generateRandomString() {
   return stringResult;
 }
 
-// Given email input, checks against users database to see if it exists
+// Given email input, returns user id if it exists in database
 function userEmailCheck(input) {
   for (user in users) {
     if (users[user].email === input) {
@@ -38,6 +36,7 @@ function userEmailCheck(input) {
   return false;
 }
 
+// Given an id and password input, check these against the users database and return true or false
 function userPasswordCheck(id, pass) {
   if (users[id].password === pass) {
     return true;
@@ -75,25 +74,61 @@ app.get("/", (req, res) => {
   res.end("Hello! Welcome to Tiny App");
 });
 
+// Register page
+app.get("/register", (req, res) => {
+  let templateVars = { userObj: users[req.cookies["user_id"]] };
+  res.render('register', templateVars)
+});
+
+// Login page
+app.get("/login", (req, res) => {
+  let templateVars = { userObj: users[req.cookies["user_id"]]};
+  res.render('login', templateVars)
+});
+
+// Login POST -  Stores username input as cookie and redirects user to /urls after handling input erros
+app.post("/login", (req, res) => {
+  if (!userEmailCheck(req.body.email)) {
+    res.redirect(400, "/login");
+    return;
+  }
+  if (!userPasswordCheck(userEmailCheck(req.body.email), req.body.password)) {
+    res.redirect(400, "/login");
+    return;
+  }
+  var id = userEmailCheck(req.body.email)
+  res.cookie('user_id', id);
+  res.redirect('/urls');
+});
+
+// Updates user database with input information and adds userID cookie
+app.post("/register", (req, res) => {
+  if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
+    res.redirect(400, "/register");
+  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
+      res.redirect(400, "/register");    
+  } else {
+      let userID = generateRandomString();
+      users[userID] = {
+                        id: userID, 
+                        email: req.body.email, 
+                        password: req.body.password
+                      };
+      res.cookie('user_id', userID);
+      res.redirect('/urls');
+      } 
+});
+
 // Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {  urls: urlDatabase, userObj: users[req.cookies["user_id"]] };
   res.render('urls_index', templateVars);
 });
 
-// Stores username input as cookie and redirects user to /urls
-app.post("/login", (req, res) => {
-  if (!userEmailCheck(req.body.email)) {
-  console.log("email doesn't exist");
-    res.redirect(400, "/login");
-  }
-  if (!userPasswordCheck(userEmailCheck(req.body.email), req.body.password)) {
-    console.log("wrong pass");
-    res.redirect(400, "/login");
-  }
-  var id = userEmailCheck(req.body.email)
-  res.cookie('user_id', id);
-  res.redirect('/urls');
+// Link generator
+app.get("/urls/new", (req, res) => {
+  let templateVars = { userObj: users[req.cookies["user_id"]]}
+  res.render("urls_new", templateVars);
 });
 
 // Logs user out, clears cookies, redirects to urls page
@@ -101,12 +136,6 @@ app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/urls');
 })
-
-// Link generator
-app.get("/urls/new", (req, res) => {
-  let templateVars = { userObj: users[req.cookies["user_id"]]}
-  res.render("urls_new", templateVars);
-});
 
 // Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
@@ -147,36 +176,6 @@ app.get("/urls/:id", (req, res) => {
                       userObj: users[req.cookies["user_id"]] 
                       };
   res.render("urls_show", templateVars);
-});
-
-// Register page
-app.get("/register", (req, res) => {
-  let templateVars = { userObj: users[req.cookies["user_id"]] };
-  res.render('register', templateVars)
-});
-
-// Login page
-app.get("/login", (req, res) => {
-  let templateVars = { userObj: users[req.cookies["user_id"]]};
-  res.render('login', templateVars)
-});
-
-// Updates user database with input information and adds userID cookie
-app.post("/register", (req, res) => {
-  if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
-    res.redirect(400, "/register");
-  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
-      res.redirect(400, "/register");    
-  } else {
-      let userID = generateRandomString();
-      users[userID] = {
-                        id: userID, 
-                        email: req.body.email, 
-                        password: req.body.password
-                      };
-      res.cookie('user_id', userID);
-      res.redirect('/urls');
-      } 
 });
 
 // Creates server with given port

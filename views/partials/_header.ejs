@@ -17,13 +17,10 @@
 <body>
     <h1>Link Shortener</h1>
     <% if (!userObj) { %>
-    <form method="POST" action="/login">
-        <label for="username">Enter username:</label>
-        <input type="text" name="username">
-        <input type="submit">
-    </form>
+        <a href="/login">Login</a><br>
+        <a href="/register">Register</a>
     <% } else { %>
-    <p>You're logged in as <%= userObj.id %></p>
+    <p>You're logged in as <%= userObj.email %></p>
     <form method="POST" action="/logout">
         <input type='submit' value="Logout">
     </form>
