@@ -3,8 +3,8 @@ var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-
 const bcrypt = require('bcrypt');
+
 var PORT = 8080; // default port 8080
 
 // Middleware to parse body of POST request
@@ -35,15 +35,6 @@ function userEmailCheck(input) {
     }
   }
   return false;
-};
-
-// Given an id and password input, check these against the users database and return true or false
-function userPasswordCheck(id, pass) {
-  if (users[id].password === pass) {
-    return true;
-  } else {
-    return false;
-  }
 };
 
 // Databases
@@ -104,9 +95,6 @@ app.post("/login", (req, res) => {
     return;
   }
   let user = userEmailCheck(req.body.email)
-  console.log(user)
-  console.log(req.body.password)
-  console.log(users[user].password)
   if (!bcrypt.compareSync(req.body.password, users[user].password)) {
     res.redirect(400, "/login");
     return;
@@ -116,7 +104,7 @@ app.post("/login", (req, res) => {
   res.redirect('/urls');
 });
 
-// Updates user database with input information and adds userID cookie
+// Register POST - Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there is not input of empty string
     res.redirect(400, "/register");
@@ -127,7 +115,7 @@ app.post("/register", (req, res) => {
       users[userID] = {
         id: userID, 
         email: req.body.email, 
-        password: bcrypt.hashSync(password, 10)
+        password: bcrypt.hashSync(req.body.password, 10)
       };
       res.cookie('user_id', userID);
       res.redirect('/urls');
@@ -209,4 +197,3 @@ app.get("/urls/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
