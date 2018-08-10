@@ -20,7 +20,8 @@
             <br>
             Short URL: <%= urls.shortURL %> <br>
             Long URL: <%= urls.longURL %> <br>
-            Date Created: <%= urls.date %>
+            Date Created: <%= urls.date %> <br>
+            Times Visited: <%= urls.count %> <br>
             <form method="POST" action="/urls/<%= urls.shortURL %>/">
                 <input name="longURL" style="width:15%" type="text" value="<%= urls.longURL %>">
                 <input type="submit" value="Update URL">
