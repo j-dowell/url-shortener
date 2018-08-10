@@ -45,7 +45,6 @@
         </tr>
         <% for (let url in urls) { %>
             <% if (userObj && urls[url].userID === userObj.id) { %>
-                
                 <tr>
                     <th><%= url %></th>
                     <th><%= urls[url].longURL%></th>
