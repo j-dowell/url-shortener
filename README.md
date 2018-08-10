@@ -17,5 +17,5 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Images
 !["Screenshot of Login page"](https://github.com/j-dowell/url-shortener/blob/master/docs/Login%20Page.png?raw=true)
 !["Screenshot Register page"](https://github.com/j-dowell/url-shortener/blob/master/docs/Register%20Page.png?raw=true)
-!["Screenshot of URL index page"](https://github.com/j-dowell/url-shortener/blob/master/docs/Short%20URL%20Page.png?raw=true
+!["Screenshot of URL index page"](https://github.com/j-dowell/url-shortener/blob/master/docs/Short%20URL%20Page.png?raw=true)
 !["Screenshot of URL info page"](https://github.com/j-dowell/url-shortener/blob/master/docs/Short%20URL%20Page.png?raw=true)
