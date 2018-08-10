@@ -3,10 +3,21 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
+const helper = require('./function.js') // helper functions
 
 // Databases
 const urlDatabase = require('./Databases/urlDb.js');
 const users = require('./Databases/userDb.js');
+
+// Given email input, returns user id if it exists in database
+function userEmailCheck(input) {
+  for (user in users) {
+    if (users[user].email === input) {
+      return users[user].id;
+    }
+  }
+  return false;
+}
 
 // Creates server with given port
 const app = express();
@@ -27,29 +38,6 @@ app.use(cookieSession({
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
-
-// HELPER FUNCTIONS
-// Returns a string of 6 random characters
-function generateRandomString() {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-  const stringLength = 6;
-  let stringResult = '';
-  for (let i = 0; i < stringLength; i++) {
-    let num = Math.floor(Math.random() * chars.length);
-    stringResult += chars[num];
-  }
-  return stringResult;
-}
-
-// Given email input, returns user id if it exists in database
-function userEmailCheck(input) {
-  for (user in users) {
-    if (users[user].email === input) {
-      return users[user].id;
-    }
-  }
-  return false;
-}
 
 // Home page
 app.get("/", (req, res) => {
@@ -73,7 +61,7 @@ app.post("/register", (req, res) => {
   } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
       res.redirect(400, "/register");    
   } else {
-      let userID = generateRandomString();
+      let userID = helper.generateRandomString();
       users[userID] = {
         id: userID, 
         email: req.body.email, 
@@ -145,8 +133,8 @@ app.get("/urls/:id", (req, res) => {
 
 // Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
-  let shortenedString = generateRandomString();
-  var todayDate = new Date().toISOString().slice(0,10);
+  let shortenedString = helper.generateRandomString();
+  var todayDate = helper.dateMaker();
   urlDatabase[shortenedString] = { 
     shortURL: shortenedString, 
     longURL: req.body.longURL, 
@@ -159,7 +147,7 @@ app.post("/urls", (req, res) => {
 // Updates long url
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id) {
-    var todayDate = new Date().toISOString().slice(0,10);
+    var todayDate = helper.dateMaker();
     let link = req.params.id;
     urlDatabase[link] = {
       shortURL: link, 
@@ -176,8 +164,7 @@ app.post("/urls/:id", (req, res) => {
 // Deletes link of choice and redirects to url page
 app.post("/urls/:id/delete", (req, res) => {
   if (urlDatabase[req.params.id].userID === req.session.user_id) {  
-    let link = req.params.id;
-    delete urlDatabase[link];
+    delete urlDatabase[req.params.id];
     res.redirect(303, 'http://localhost:8080/urls');
   } else {
     let templateVars = { userObj: users[req.session.user_id] };
