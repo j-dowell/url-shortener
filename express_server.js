@@ -3,13 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
-const helper = require('./function.js') // helper functions
+const helper = require('./function.js'); // helper functions
 
 // Databases
 const urlDatabase = require('./Databases/urlDb.js');
 const users = require('./Databases/userDb.js');
-
-
 
 // Creates server with given port
 const app = express();
@@ -29,26 +27,6 @@ app.use(cookieSession({
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
-
-// HELPER FUNCTIONS
-// Given email input, returns user id if it exists in database
-// function userEmailCheck(input) {
-//   for (user in users) {
-//     if (users[user].email === input) {
-//       return users[user].id;
-//     }
-//   }
-//   return false;
-// }
-
-// function addToURLDatabase(short, long, user, time) {
-//   urlDatabase[short] = {
-//       shortURL: short,
-//       longURL: long,
-//       userID: user,
-//       date: time
-//   };
-// } 
 
 // Home page
 app.get("/", (req, res) => {
@@ -80,7 +58,7 @@ app.post("/register", (req, res) => {
       };
       req.session.user_id = userID;
       res.redirect('/urls');
-    }; 
+    }
 });
 
 // Login page
@@ -88,7 +66,7 @@ app.get("/login", (req, res) => {
   let templateVars = {
     userObj: users[req.session.user_id]
   };
-  res.render('login', templateVars)
+  res.render('login', templateVars);
 });
 
 // Login POST -  Stores username input as cookie and redirects user to /urls
@@ -97,7 +75,7 @@ app.post("/login", (req, res) => {
     res.redirect(400, "/login");
     return;
   }
-  let user = helper.userEmailCheck(req.body.email)
+  let user = helper.userEmailCheck(req.body.email);
   if (!bcrypt.compareSync(req.body.password, users[user].password)) {
     res.redirect(400, "/login");
     return;
@@ -135,7 +113,7 @@ app.get("/urls/new", (req, res) => {
 // Unique URL GET - Displays short and long URL
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
-    res.redirect(404, '/login')
+    res.redirect(404, '/login');
     return;
   }
   if (urlDatabase[req.params.id].userID === req.session.user_id) {
@@ -145,7 +123,7 @@ app.get("/urls/:id", (req, res) => {
     };
     res.render("urls_show", templateVars);
   } else {
-    let templateVars = { userObj: users[req.session.user_id] }
+    let templateVars = { userObj: users[req.session.user_id] };
     res.render('denied', templateVars);
   } 
 });
