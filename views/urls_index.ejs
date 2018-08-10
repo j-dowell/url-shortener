@@ -8,24 +8,21 @@
         <% include partials/_header %>
     </header>
     <table cellpadding="10" style="width:50%" align="center">
-        <tr>
-        </tr>
         <% for (let url in urls) { %>
             <% if (userObj && urls[url].userID === userObj.id) { %>
-        <form method="POST" action="/urls/<%= url %>/delete">
-        <tr>
-            <th><%= url %></th>
-            <th><%= urls[url].longURL%></th>
-            <th><%= urls[url].date %></th>
-            <th><a href="/urls/<%= url %>"> Edit </a></th>
-            <th><input type="submit" value="Delete🗑️" style="width:100px"></form></th>
-        </tr>
-       
+                <form method="POST" action="/urls/<%= url %>/delete">
+                <tr>
+                    <th><%= url %></th>
+                    <th><%= urls[url].longURL%></th>
+                    <th><%= urls[url].date %></th>
+                    <th><a href="/urls/<%= url %>"> Edit </a></th>
+                    <th><input type="submit" value="Delete🗑️" style="width:100px"></form></th>
+                </tr>
             <% } %>
         <% }; %>
     </table>
     <% if (userObj) { %>
-    <a style="padding:10px;word-wrap:normal;display:inline-block" href='/urls/new'>Create a New Short Link</a>
+        <a style="padding:10px;word-wrap:normal;display:inline-block" href='/urls/new'>Create a New Short Link</a>
     <% }; %>
 </body>
 </html>

@@ -54,15 +54,14 @@
                 <input id="submit1" type="submit">
             </form> 
         </div>
-            <p><a href='/login'>Click here to login if you already have an account</a></p>
-        <% } else { %>
+        <p><a href='/login'>Click here to login if you already have an account</a></p>
+    <% } else { %>
         <p>Hi! You're already logged in as <%= userObj.email %></p>
         <a href="/urls">Home page</a>
-        </form>
         <form method="POST" action="/logout">
             <input type='submit' value="Logout">
         </form>
-        <% }; %>
+    <% }; %>
 </body>
 </html>
 

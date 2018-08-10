@@ -1,8 +1,10 @@
 // HELPER FUNCTIONS
-// Returns a string of 6 random characters
-var exports = module.exports;
+let urlDatabase = require('./Databases/urlDb.js');
+let users = require('./Databases/userDb.js');
+exports = module.exports;
 
-exports.generateRandomString = function() {
+// Returns a string of 6 random characters
+function generateRandomString() {
     const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
     const stringLength = 6;
     let stringResult = '';
@@ -11,11 +13,32 @@ exports.generateRandomString = function() {
       stringResult += chars[num];
     }
     return stringResult;
-  }
+}
   
 // Returns current month/day/year
-exports.dateMaker = function() {
+function dateMaker() {
     return new Date().toISOString().slice(0,10);
-  }
+}
 
+function userEmailCheck(input) {
+    for (user in users) {
+      if (users[user].email === input) {
+        return users[user].id;
+      }
+    }
+    return false;
+  }
   
+function addToURLDatabase(short, long, user, time) {
+    urlDatabase[short] = {
+        shortURL: short,
+        longURL: long,
+        userID: user,
+        date: time
+    };
+  } 
+
+  exports.generateRandomString = generateRandomString
+  exports.dateMaker = dateMaker
+  exports.userEmailCheck = userEmailCheck
+  exports.addToURLDatabase = addToURLDatabase

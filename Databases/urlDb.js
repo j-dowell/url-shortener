@@ -4,7 +4,7 @@ let urlDatabase = {
       shortURL: "b2xVn2",
       longURL: "http://www.lighthouselabs.ca",
       userID: "user2RandomID",
-      date: "2018-08-09"
+      date: "2018-08-09", 
     },
     "9sm5xK": { 
       shortURL: "9sm5xK",
@@ -13,6 +13,5 @@ let urlDatabase = {
       date: "2018-08-09"
     }
 };
-
 
 module.exports = urlDatabase;

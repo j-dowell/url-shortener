@@ -9,15 +9,7 @@ const helper = require('./function.js') // helper functions
 const urlDatabase = require('./Databases/urlDb.js');
 const users = require('./Databases/userDb.js');
 
-// Given email input, returns user id if it exists in database
-function userEmailCheck(input) {
-  for (user in users) {
-    if (users[user].email === input) {
-      return users[user].id;
-    }
-  }
-  return false;
-}
+
 
 // Creates server with given port
 const app = express();
@@ -33,11 +25,30 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'user_id',
   keys: ['lighthouse', 'tiny', 'url'],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
+
+// HELPER FUNCTIONS
+// Given email input, returns user id if it exists in database
+// function userEmailCheck(input) {
+//   for (user in users) {
+//     if (users[user].email === input) {
+//       return users[user].id;
+//     }
+//   }
+//   return false;
+// }
+
+// function addToURLDatabase(short, long, user, time) {
+//   urlDatabase[short] = {
+//       shortURL: short,
+//       longURL: long,
+//       userID: user,
+//       date: time
+//   };
+// } 
 
 // Home page
 app.get("/", (req, res) => {
@@ -48,7 +59,7 @@ app.get("/", (req, res) => {
   }
 });
 
-// Register page
+// Register GET page
 app.get("/register", (req, res) => {
   let templateVars = { userObj: users[req.session.user_id] };
   res.render('register', templateVars);
@@ -58,7 +69,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there isn't input of empty string
     res.redirect(400, "/register");
-  } else if (userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
+  } else if (helper.userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
       res.redirect(400, "/register");    
   } else {
       let userID = helper.generateRandomString();
@@ -82,21 +93,21 @@ app.get("/login", (req, res) => {
 
 // Login POST -  Stores username input as cookie and redirects user to /urls
 app.post("/login", (req, res) => {
-  if (!userEmailCheck(req.body.email)) { 
+  if (!helper.userEmailCheck(req.body.email)) { 
     res.redirect(400, "/login");
     return;
   }
-  let user = userEmailCheck(req.body.email)
+  let user = helper.userEmailCheck(req.body.email)
   if (!bcrypt.compareSync(req.body.password, users[user].password)) {
     res.redirect(400, "/login");
     return;
   }
-  let id = userEmailCheck(req.body.email);
+  let id = helper.userEmailCheck(req.body.email);
   req.session.user_id = id;
   res.redirect('/urls');
 });
 
-// Displays current directory of shortened links and link to shorten a new one
+// urls table GET - Displays current directory of shortened links and link to shorten a new one
 app.get('/urls', (req, res) => {
   let templateVars = {
     urls: urlDatabase, 
@@ -105,7 +116,15 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-// Short url generator page
+// urls POST - Takes in user input, adds new random URL and redirects client
+app.post("/urls", (req, res) => {
+  let shortenedString = helper.generateRandomString();
+  var todayDate = helper.dateMaker();
+  helper.addToURLDatabase(shortenedString, req.body.longURL, req.session.user_id, todayDate);
+  res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
+});
+
+// urls/new GET - Short url generator page
 app.get("/urls/new", (req, res) => {
   let templateVars = { 
     userObj: users[req.session.user_id]
@@ -113,7 +132,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// Displays short and long URL
+// Unique URL GET - Displays short and long URL
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
     res.redirect(404, '/login')
@@ -131,30 +150,12 @@ app.get("/urls/:id", (req, res) => {
   } 
 });
 
-// Takes in user input, adds new random URL and redirects client
-app.post("/urls", (req, res) => {
-  let shortenedString = helper.generateRandomString();
-  var todayDate = helper.dateMaker();
-  urlDatabase[shortenedString] = { 
-    shortURL: shortenedString, 
-    longURL: req.body.longURL, 
-    userID: req.session.user_id,
-    date: todayDate
-  };
-  res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
-});
-
-// Updates long url
+// URL POST - Updates long url
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id) {
     var todayDate = helper.dateMaker();
     let link = req.params.id;
-    urlDatabase[link] = {
-      shortURL: link, 
-      longURL: req.body.longURL, 
-      userID: req.session.user_id,
-      date: todayDate
-    };
+    helper.addToURLDatabase(link, req.body.longURL, req.session.user_id, todayDate);
     res.redirect('/urls');
   } else {
     res.redirect('/urls');

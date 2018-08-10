@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head></head>
+  <head>
   <style> 
     * {
       font-family: sans-serif
@@ -10,20 +10,18 @@
             width: 50%;
     }
   </style>
+  </head>
   <body>
     <% include partials/_header %>  
     <% if (!userObj) { %>  
-      <!-- Please login or register to continue:
-      <p><a href="/login">Login</a></p>
-      <p><a href="/register">Register</a></p> -->
     <% } else { %>
-    <div>
-      <form action="/urls" method="POST" style="margin:150px;">
-        <label for="longURL">Enter a URL to shorten:</label>
-        <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-        <input type="submit" value="Submit">
-      </form>
-  </div>
+      <div>
+        <form action="/urls" method="POST" style="margin:150px;">
+          <label for="longURL">Enter a URL to shorten:</label>
+          <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+          <input type="submit" value="Submit">
+        </form>
+    </div>
     <% }; %>
   </body>
 </html>
