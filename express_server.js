@@ -156,6 +156,8 @@ app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
     res.redirect(404, 'http://localhost:8080');
   } else {
+    urlDatabase[req.params.shortURL].count++
+    console.log(urlDatabase)
     let longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(302, longURL);
   }

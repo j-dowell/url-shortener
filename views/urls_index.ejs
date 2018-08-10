@@ -8,6 +8,14 @@
         <% include partials/_header %>
     </header>
     <table cellpadding="10" style="width:50%" align="center">
+        <tr>
+            <th>Short URL</th>
+            <th>Original URL</th>
+            <th>Date Created</th>
+            <th>Times visited</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
         <% for (let url in urls) { %>
             <% if (userObj && urls[url].userID === userObj.id) { %>
                 <form method="POST" action="/urls/<%= url %>/delete">
@@ -15,6 +23,7 @@
                     <th><%= url %></th>
                     <th><%= urls[url].longURL%></th>
                     <th><%= urls[url].date %></th>
+                    <th><%= urls[url].count %></th>
                     <th><a href="/urls/<%= url %>"> Edit </a></th>
                     <th><input type="submit" value="Delete🗑️" style="width:100px"></form></th>
                 </tr>

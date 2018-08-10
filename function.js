@@ -36,7 +36,8 @@ function addToURLDatabase(short, long, user, time) {
       shortURL: short,
       longURL: long,
       userID: user,
-      date: time
+      date: time,
+      count: 0
   };
 } 
 
