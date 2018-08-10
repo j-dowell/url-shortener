@@ -2,31 +2,60 @@
 <html lang="en">
 <head>
   <title>TinyApp</title>
+  <style>
+        th {
+          font-weight: normal;
+        }
+        #title {
+          font-size: 25px;
+          font-weight: bold;
+        }
+        #sub1 {
+            text-align: center;
+            font-size: 1.0em;
+            line-height: 200%;
+        }
+        #sub1 {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            margin-bottom: 0.5em;
+            padding-top: .6em;
+            padding-bottom: .6em;
+            border-radius: 5px;
+            border: solid #cccccc 1px;
+            box-shadow: 2px 2px 1px #888888;
+        }  
+  </style>
 </head>
 <body>
     <header>
         <% include partials/_header %>
     </header>
     <% if (userObj) { %>
-    <table cellpadding="10" style="width:50%" align="center">
+    <table cellpadding="10" style="width:75%" align="center">
         <tr>
-            <th>Short URL</th>
-            <th>Original URL</th>
-            <th>Date Created</th>
-            <th>Times visited</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th id="title">Short URL</th>
+            <th id="title">Long URL</th>
+            <th id="title">Date Created</th>
+            <th id="title">Times visited</th>
+            <th id="title">Edit</th>
+            <th id="title">Delete</th>
+            <th id="title">Visit</th>
         </tr>
         <% for (let url in urls) { %>
             <% if (userObj && urls[url].userID === userObj.id) { %>
-                <form method="POST" action="/urls/<%= url %>/delete">
+                
                 <tr>
                     <th><%= url %></th>
                     <th><%= urls[url].longURL%></th>
                     <th><%= urls[url].date %></th>
                     <th><%= urls[url].count %></th>
                     <th><a href="/urls/<%= url %>"> Edit </a></th>
-                    <th><input type="submit" value="Delete🗑️" style="width:100px"></form></th>
+                    <form method="POST" action="/urls/<%= url %>/delete">
+                    <th><input type="submit" value="🗑️" id="sub1" style="width:100px"></form></th>
+                    <form method="GET" action="/u/<%= url %>">
+                    <th><input type="submit" value="➡️" id="sub1" style="width:100px"></form></th>
                 </tr>
             <% } %>
         <% }; %>
