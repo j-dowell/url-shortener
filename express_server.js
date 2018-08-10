@@ -46,9 +46,9 @@ app.get("/register", (req, res) => {
 // Register POST - Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there isn't input of empty string
-    res.redirect(400, "/register");
+    res.redirect(401, "/register");
   } else if (helper.userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
-      res.redirect(400, "/register");    
+      res.redirect(401, "/register");    
   } else {
       let userID = helper.generateRandomString();
       users[userID] = {
@@ -72,12 +72,12 @@ app.get("/login", (req, res) => {
 // Login POST -  Stores username input as cookie and redirects user to /urls
 app.post("/login", (req, res) => {
   if (!helper.userEmailCheck(req.body.email)) { 
-    res.redirect(400, "/login");
+    res.redirect(401, "/login");
     return;
   }
   let user = helper.userEmailCheck(req.body.email);
   if (!bcrypt.compareSync(req.body.password, users[user].password)) {
-    res.redirect(400, "/login");
+    res.redirect(401, "/login");
     return;
   }
   let id = helper.userEmailCheck(req.body.email);
