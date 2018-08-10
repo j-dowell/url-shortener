@@ -7,6 +7,7 @@
     <header>
         <% include partials/_header %>
     </header>
+    <% if (userObj) { %>
     <table cellpadding="10" style="width:50%" align="center">
         <tr>
             <th>Short URL</th>
@@ -30,7 +31,6 @@
             <% } %>
         <% }; %>
     </table>
-    <% if (userObj) { %>
         <a style="padding:10px;word-wrap:normal;display:inline-block" href='/urls/new'>Create a New Short Link</a>
     <% }; %>
 </body>
