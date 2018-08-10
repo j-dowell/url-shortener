@@ -46,9 +46,9 @@ app.get("/register", (req, res) => {
 // Register POST - Updates user database with input information and adds userID cookie
 app.post("/register", (req, res) => {
   if (!req.body.password || !req.body.email) { // Checking there isn't input of empty string
-    res.redirect(401, "/register");
+    res.render('incorrect-credentials');
   } else if (helper.userEmailCheck(req.body.email)) { // Checking users database doesn't already have email
-      res.redirect(401, "/register");    
+    res.render('incorrect-credentials');
   } else {
       let userID = helper.generateRandomString();
       users[userID] = {
@@ -72,12 +72,12 @@ app.get("/login", (req, res) => {
 // Login POST -  Stores username input as cookie and redirects user to /urls
 app.post("/login", (req, res) => {
   if (!helper.userEmailCheck(req.body.email)) { 
-    res.redirect(401, "/login");
+    res.render('incorrect-credentials');
     return;
   }
   let user = helper.userEmailCheck(req.body.email);
   if (!bcrypt.compareSync(req.body.password, users[user].password)) {
-    res.redirect(401, "/login");
+    res.render('incorrect-credentials');
     return;
   }
   let id = helper.userEmailCheck(req.body.email);
@@ -114,7 +114,6 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
     res.render('404')
-    // res.redirect(404, '/login');
     return;
   }
   if (urlDatabase[req.params.id].userID === req.session.user_id) {
@@ -156,7 +155,6 @@ app.post("/urls/:id/delete", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
     res.render('404');
-    // res.redirect(404, 'http://localhost:8080');
   } else {
     urlDatabase[req.params.shortURL].count++
     let longURL = urlDatabase[req.params.shortURL].longURL;
