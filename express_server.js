@@ -127,6 +127,10 @@ app.get("/urls/new", (req, res) => {
 
 // Displays short and long URL
 app.get("/urls/:id", (req, res) => {
+  if (!urlDatabase.hasOwnProperty(req.params.id)) {
+    res.redirect(404, '/login')
+    return;
+  }
   if (urlDatabase[req.params.id].userID === req.session.user_id) {
     let templateVars = {
       urls: urlDatabase[req.params.id],
@@ -142,10 +146,12 @@ app.get("/urls/:id", (req, res) => {
 // Takes in user input, adds new random URL and redirects client
 app.post("/urls", (req, res) => {
   let shortenedString = generateRandomString();
+  var todayDate = new Date().toISOString().slice(0,10);
   urlDatabase[shortenedString] = { 
     shortURL: shortenedString, 
     longURL: req.body.longURL, 
-    userID: req.session.user_id
+    userID: req.session.user_id,
+    date: todayDate
   };
   res.redirect(303, `http://localhost:8080/urls/${shortenedString}`);
 });
@@ -153,11 +159,13 @@ app.post("/urls", (req, res) => {
 // Updates long url
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id) {
+    var todayDate = new Date().toISOString().slice(0,10);
     let link = req.params.id;
     urlDatabase[link] = {
       shortURL: link, 
       longURL: req.body.longURL, 
-      userID: req.session.user_id
+      userID: req.session.user_id,
+      date: todayDate
     };
     res.redirect('/urls');
   } else {

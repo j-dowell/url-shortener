@@ -12,14 +12,15 @@
 </head>
 <body>
     <header>
-            <% include partials/_header %>
+        <% include partials/_header %>
     </header>
     <% if (!userObj) { %>
         <% } else { %>
         <div>
             <br>
             Short URL: <%= urls.shortURL %> <br>
-            Long URL: <%= urls.longURL %>
+            Long URL: <%= urls.longURL %> <br>
+            Date Created: <%= urls.date %>
             <form method="POST" action="/urls/<%= urls.shortURL %>/">
                 <input name="longURL" style="width:15%" type="text" value="<%= urls.longURL %>">
                 <input type="submit" value="Update URL">
