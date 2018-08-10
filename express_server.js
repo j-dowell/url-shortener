@@ -113,7 +113,8 @@ app.get("/urls/new", (req, res) => {
 // Unique URL GET - Displays short and long URL
 app.get("/urls/:id", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.id)) {
-    res.redirect(404, '/login');
+    res.render('404')
+    // res.redirect(404, '/login');
     return;
   }
   if (urlDatabase[req.params.id].userID === req.session.user_id) {
@@ -154,7 +155,8 @@ app.post("/urls/:id/delete", (req, res) => {
 // Checks if shortened URL is valid, and redirects to it if so
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
-    res.redirect(404, 'http://localhost:8080');
+    res.render('404');
+    // res.redirect(404, 'http://localhost:8080');
   } else {
     urlDatabase[req.params.shortURL].count++
     let longURL = urlDatabase[req.params.shortURL].longURL;
