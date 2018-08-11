@@ -156,7 +156,8 @@ app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase.hasOwnProperty(req.params.shortURL)) {
     res.render('404');
   } else {
-    urlDatabase[req.params.shortURL].count++
+    urlDatabase[req.params.shortURL].count++ // incrementing view count
+    helper.uniqueViewChecker(req.params.shortURL, req.session.user_id); // adding to unique user list
     let longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(302, longURL);
   }

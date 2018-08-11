@@ -37,11 +37,19 @@ function addToURLDatabase(short, long, user, time) {
       longURL: long,
       userID: user,
       date: time,
-      count: 0
+      count: 0,
+      unique: []
   };
 } 
 
-  exports.generateRandomString = generateRandomString
-  exports.dateMaker = dateMaker
-  exports.userEmailCheck = userEmailCheck
-  exports.addToURLDatabase = addToURLDatabase
+function uniqueViewChecker(link, viewer) {
+  if (!urlDatabase[link].unique.includes(viewer)) {
+    urlDatabase[link].unique.push(viewer);
+  }
+}
+
+  exports.generateRandomString = generateRandomString;
+  exports.dateMaker = dateMaker;
+  exports.userEmailCheck = userEmailCheck;
+  exports.addToURLDatabase = addToURLDatabase;
+  exports.uniqueViewChecker = uniqueViewChecker;

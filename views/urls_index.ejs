@@ -38,7 +38,8 @@
             <th id="title">Tiny URL</th>
             <th id="title">Long URL</th>
             <th id="title">Date Created</th>
-            <th id="title">Times visited</th>
+            <th id="title">Times Visited</th>
+            <th id="title">Unique Visits</th>
             <th id="title">Edit</th>
             <th id="title">Delete</th>
             <th id="title">Visit</th>
@@ -50,6 +51,7 @@
                     <th><%= urls[url].longURL%></th>
                     <th><%= urls[url].date %></th>
                     <th><%= urls[url].count %></th>
+                    <th><%= urls[url].unique.length %></th>
                     <th><a href="/urls/<%= url %>"> Edit </a></th>
                     <form method="POST" action="/urls/<%= url %>/delete">
                     <th><input type="submit" value="🗑️" id="sub1" style="width:100px"></form></th>
