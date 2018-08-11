@@ -23,6 +23,7 @@
             Date Created: <%= urls.date %> <br>
             Times Visited: <%= urls.count %> <br>
             Unique Visits: <%= urls.unique.length %> <br>
+            
             <form method="POST" action="/urls/<%= urls.shortURL %>/">
                 <input name="longURL" style="width:15%" type="text" value="<%= urls.longURL %>">
                 <input type="submit" value="Update URL">
@@ -30,6 +31,14 @@
         </div>
     <p><a href="/urls">Click here to see all shortened URLs</a></p>
     <p><a href="/u/<%= urls.shortURL %>">Click here to visit URL</a></p>
+    
+    Viewing Timestamps: 
+    <ul>
+        <% for (let i = 0; i < urls.visitTime.length; i++) { %>
+            <%= urls.visitTime[i] %><br>
+        <% } %>
+    </ul>
     <% }; %>
+
 </body>
 </html>

@@ -38,7 +38,8 @@ function addToURLDatabase(short, long, user, time) {
       userID: user,
       date: time,
       count: 0,
-      unique: []
+      unique: [],
+      visitTime: []
   };
 } 
 

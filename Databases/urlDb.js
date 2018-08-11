@@ -6,7 +6,8 @@ let urlDatabase = {
       userID: "user2RandomID",
       date: "2018-08-09", 
       count: 0,
-      unique: []
+      unique: [],
+      visitTime: []
     },
     "9sm5xK": { 
       shortURL: "9sm5xK",
@@ -14,7 +15,8 @@ let urlDatabase = {
       userID: 'user2RandomID',
       date: "2018-08-09",
       count: 0,
-      unique: []
+      unique: [],
+      visitTime: []
     }
 };
 
